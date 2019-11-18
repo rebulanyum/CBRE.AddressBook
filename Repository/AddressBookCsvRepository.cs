@@ -10,6 +10,7 @@ namespace CBRE.AddressBook.Repository
     public class AddressBookCsvRepository : IAddressBookRepository
     {
         private string filePath;
+
         public AddressBookCsvRepository(string filePath)
         {
             this.filePath = filePath;
@@ -31,7 +32,9 @@ namespace CBRE.AddressBook.Repository
                 throw new Exception(error.Value);
             }
 
+            int sequence = 0;
             var persons = from res in result
+                          let a = res.Result.ID = ++sequence
                           select res.Result;
             return persons.ToArray();
         }
