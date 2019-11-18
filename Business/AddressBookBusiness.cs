@@ -25,5 +25,19 @@ namespace CBRE.AddressBook.Business
                     orderby person.BirthDate ascending
                     select person).FirstOrDefault();
         }
+
+        public override IEnumerable<Person> FindPersonByName(string personName)
+        {
+            return from person in AddressBookRepository.RetrieveAllPersons()
+                   where person.FullName.StartsWith(personName, StringComparison.InvariantCultureIgnoreCase)
+                   select person;
+        }
+
+        public override Person GetPersonByID(int personID)
+        {
+            return (from person in AddressBookRepository.RetrieveAllPersons()
+                    where person.ID == personID
+                    select person).SingleOrDefault();
+        }
     }
 }

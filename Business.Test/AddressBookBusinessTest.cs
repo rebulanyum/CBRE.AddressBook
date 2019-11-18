@@ -20,8 +20,8 @@ namespace CBRE.AddressBook.Business.Test
         {
             persons = new Person[]
             {
-                new Person() { FullName = "Richard Azul", Gender = Gender.Male, BirthDate = DateTime.Today.AddYears(-30) },
-                new Person() { FullName = "Clara White", Gender = Gender.Female, BirthDate = DateTime.Today.AddYears(-30).AddDays(-1) }
+                new Person() { ID = 1, FullName = "Richard Azul", Gender = Gender.Male, BirthDate = DateTime.Today.AddYears(-30) },
+                new Person() { ID = 2, FullName = "Clara White", Gender = Gender.Female, BirthDate = DateTime.Today.AddYears(-30).AddDays(-1) }
             };
         }
 
@@ -37,8 +37,9 @@ namespace CBRE.AddressBook.Business.Test
         public void When2PersonsGiven_CanCalculatesAgeDifference()
         {
             int diffReal = (int)(persons[1].BirthDate - persons[0].BirthDate).TotalDays;
-            int diffCalculated = addressBookBusiness.CalculateAgeDifferenceInDays(persons[0], persons[1]);
+            int diffCalculated = addressBookBusiness.CalculateAgeDifferenceInDays(persons[0].ID, persons[1].ID);
 
+            addressBookRepositoryMock.Verify(abr => abr.RetrieveAllPersons(), Times.AtLeastOnce);
             Assert.AreEqual(diffReal, diffCalculated);
         }
 
@@ -72,6 +73,38 @@ namespace CBRE.AddressBook.Business.Test
 
             addressBookRepositoryMock.Verify(abr => abr.RetrieveAllPersons(), Times.Once);
             Assert.AreSame(oldestReal, oldestCalculated);
+        }
+
+        [TestMethod]
+        public void WhenPersonNameGiven_CanFindThePerson()
+        {
+            string name = persons[0].FullName.Substring(0, 3).ToLowerInvariant();
+            IEnumerable<Person> personsReal, personsCalculated;
+
+            personsReal = from person in persons
+                          where person.FullName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase)
+                          select person;
+
+            personsCalculated = addressBookBusiness.FindPersonByName(name);
+
+            addressBookRepositoryMock.Verify(abr => abr.RetrieveAllPersons(), Times.Once);
+            CollectionAssert.AreEquivalent(personsReal.ToList(), personsCalculated.ToList());
+        }
+
+        [TestMethod]
+        public void WhenPersonIDGiven_CanGetThePerson()
+        {
+            int personID = persons[0].ID;
+            Person personReal, personCalculated;
+
+            personReal = (from person in persons
+                          where person.ID == personID
+                          select person).Single();
+
+            personCalculated = addressBookBusiness.GetPersonByID(personID);
+
+            addressBookRepositoryMock.Verify(abr => abr.RetrieveAllPersons(), Times.Once);
+            Assert.AreSame(personReal, personCalculated);
         }
     }
 }
