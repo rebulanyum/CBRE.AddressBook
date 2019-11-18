@@ -21,6 +21,9 @@ namespace CBRE.AddressBook.ConsoleUI
             var serviceProvider = new ServiceCollection()
                 .AddSingleton((sp) => new CommandLineApplication(false))
                 .AddTransient<AddressBookConsoleApp>()
+                .AddTransient<IAddressBookBusiness, AddressBookBusiness>()
+                .AddTransient<IAddressBookRepository, AddressBookCsvRepository>()
+
             .BuildServiceProvider();
 
             return serviceProvider;
