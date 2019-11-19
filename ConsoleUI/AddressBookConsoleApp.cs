@@ -52,8 +52,6 @@ namespace CBRE.AddressBook.ConsoleUI
                 CommandArgument genderArgument = application.Argument("gender", "The gender of Person to look for: Male | Female", (argument) =>
                 {
                     argument.ShowInHelpText = true;
-                    argument.Values.Add("Male");
-                    argument.Values.Add("Female");
                 });
                 application.OnExecute(() =>
                 {
@@ -63,7 +61,12 @@ namespace CBRE.AddressBook.ConsoleUI
                         return 0;
                     }
 
-                    var gender = Enum.Parse<Gender>(genderArgument.Value, true);
+                    Gender gender;
+                    if (!Enum.TryParse(genderArgument.Value, true, out gender))
+                    {
+                        application.Error.WriteLine($"The argument {genderArgument.Name} cannot be parsed.");
+                        return -1;
+                    }
                     uint count = addressBookBusiness.CountGenders(gender);
                     Console.WriteLine($"There are {count} {gender}s.");
                     return 0;

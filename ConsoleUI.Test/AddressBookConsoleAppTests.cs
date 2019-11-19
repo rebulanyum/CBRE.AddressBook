@@ -15,6 +15,7 @@ namespace ConsoleUI.Test
     {
         Mock<IAddressBookBusiness> addressBookBusinessMock;
         AddressBookConsoleApp addressBookConsoleApp;
+        CommandLineApplication commandLineApplication;
         static Person[] persons;
 
         [ClassInitialize]
@@ -36,7 +37,8 @@ namespace ConsoleUI.Test
             addressBookBusinessMock.Setup(abr => abr.FindOldest()).Returns(persons[0]);
             addressBookBusinessMock.Setup(abr => abr.FindPersonByName(It.IsAny<string>())).Returns(persons);
             addressBookBusinessMock.Setup(abr => abr.GetPersonByID(It.IsAny<int>())).Returns(persons[0]);
-            addressBookConsoleApp = new AddressBookConsoleApp(new CommandLineApplication(false), addressBookBusinessMock.Object);
+            commandLineApplication = new CommandLineApplication(false);
+            addressBookConsoleApp = new AddressBookConsoleApp(commandLineApplication, addressBookBusinessMock.Object);
         }
 
         [TestMethod]
@@ -55,6 +57,25 @@ namespace ConsoleUI.Test
             {
                 addressBookBusinessMock.Verify(abb => abb.CountGenders(Gender.Male), Times.Once);
                 Assert.AreEqual(0, result);
+            }
+        }
+
+        [TestMethod]
+        public void WhenGivenUnrecognizedGender_CountGenderCommand_ShouldReturnError()
+        {
+            int result = -1;
+            try
+            {
+                result = addressBookConsoleApp.Run("countgender", "Unrecognized");
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                addressBookBusinessMock.Verify(abb => abb.CountGenders(It.IsAny<Gender>()), Times.Never);
+                Assert.AreEqual(-1, result);
             }
         }
 
@@ -93,6 +114,25 @@ namespace ConsoleUI.Test
             {
                 addressBookBusinessMock.Verify(abb => abb.CalculateAgeDifferenceInDays(1, 2), Times.Once);
                 Assert.AreEqual(0, result);
+            }
+        }
+
+        [TestMethod]
+        public void WhenGivenArbitraryArguments_CalculateAgeDiffCommand_ShouldReturnError()
+        {
+            int result = -1;
+            try
+            {
+                result = addressBookConsoleApp.Run("calculateagediff", "asdas", "werteter");
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                addressBookBusinessMock.Verify(abb => abb.CalculateAgeDifferenceInDays(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+                Assert.AreEqual(-1, result);
             }
         }
 
