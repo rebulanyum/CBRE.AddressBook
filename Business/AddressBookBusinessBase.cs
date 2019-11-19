@@ -24,8 +24,15 @@ namespace CBRE.AddressBook.Business
         }
         public virtual int CalculateAgeDifferenceInDays(Person person1, Person person2)
         {
-            TimeSpan difference = person2.BirthDate - person1.BirthDate;
-            return (int)difference.TotalDays;
+            try
+            {
+                TimeSpan difference = person2.BirthDate - person1.BirthDate;
+                return (int)difference.TotalDays;
+            }
+            catch (Exception e)
+            {
+                throw new AddressBookBusinessException(e, "Couldn't find the person(s).");
+            }
         }
 
         public abstract IEnumerable<Person> FindPersonByName(string personName);

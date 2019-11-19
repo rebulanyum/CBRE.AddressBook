@@ -44,6 +44,13 @@ namespace CBRE.AddressBook.Business.Test
         }
 
         [TestMethod]
+        [ExpectedException(typeof(AddressBookBusinessException), AllowDerivedTypes = true)]
+        public void When1PersonGiven_CalculateAgeDifference_ThrowsException()
+        {
+            addressBookBusiness.CalculateAgeDifferenceInDays(1, -1);
+        }
+
+        [TestMethod]
         public void WhenGivenGender_CanCountPersonsWithSpecifiedGender()
         {
             Gender gender;

@@ -14,30 +14,58 @@ namespace CBRE.AddressBook.Business
 
         public override uint CountGenders(Gender gender)
         {
-            return (uint)(from person in AddressBookRepository.RetrieveAllPersons()
-                          where person.Gender == gender
-                          select person).Count();
+            try
+            {
+                return (uint)(from person in AddressBookRepository.RetrieveAllPersons()
+                              where person.Gender == gender
+                              select person).Count();
+            }
+            catch (Exception e)
+            {
+                throw new AddressBookBusinessException(e);
+            }
         }
 
         public override Person FindOldest()
         {
-            return (from person in AddressBookRepository.RetrieveAllPersons()
-                    orderby person.BirthDate ascending
-                    select person).FirstOrDefault();
+            try
+            {
+                return (from person in AddressBookRepository.RetrieveAllPersons()
+                        orderby person.BirthDate ascending
+                        select person).FirstOrDefault();
+            }
+            catch (Exception e)
+            {
+                throw new AddressBookBusinessException(e);
+            }
         }
 
         public override IEnumerable<Person> FindPersonByName(string personName)
         {
-            return from person in AddressBookRepository.RetrieveAllPersons()
-                   where person.FullName.StartsWith(personName, StringComparison.InvariantCultureIgnoreCase)
-                   select person;
+            try
+            {
+                return from person in AddressBookRepository.RetrieveAllPersons()
+                       where person.FullName.StartsWith(personName, StringComparison.InvariantCultureIgnoreCase)
+                       select person;
+            }
+            catch (Exception e)
+            {
+                throw new AddressBookBusinessException(e);
+            }
         }
 
         public override Person GetPersonByID(int personID)
         {
-            return (from person in AddressBookRepository.RetrieveAllPersons()
-                    where person.ID == personID
-                    select person).SingleOrDefault();
+            try
+            {
+                return (from person in AddressBookRepository.RetrieveAllPersons()
+                        where person.ID == personID
+                        select person).SingleOrDefault();
+            }
+            catch (Exception e)
+            {
+                throw new AddressBookBusinessException(e);
+            }
         }
     }
 }
