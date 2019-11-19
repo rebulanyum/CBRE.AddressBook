@@ -7,6 +7,13 @@ using System.Text;
 
 namespace CBRE.AddressBook.ConsoleUI
 {
+    public static class PersonExtensions
+    {
+        public static void Print(this Person person)
+        {
+            Console.WriteLine($"{person.ID},{person.FullName},{person.Gender},{person.BirthDate.ToShortDateString()}");
+        }
+    }
     public class AddressBookConsoleApp
     {
         const string HelpFlag = "-? |-h |--help";
@@ -88,7 +95,7 @@ namespace CBRE.AddressBook.ConsoleUI
                     }
                     
                     Person person = addressBookBusiness.FindOldest();
-                    Console.WriteLine(ToString(person));
+                    person.Print();
                     return 0;
                 });
             });
@@ -153,7 +160,7 @@ namespace CBRE.AddressBook.ConsoleUI
                     IEnumerable<Person> persons = addressBookBusiness.FindPersonByName(personName);
                     foreach (Person person in persons)
                     {
-                        Console.WriteLine(ToString(person));
+                        person.Print();
                     }
                     return 0;
                 });
