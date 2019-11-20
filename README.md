@@ -31,3 +31,5 @@ Examples:
 > dotnet CBRE.AddressBook.ConsoleUI.dll calculateagediff 3 4
 >
 > The age difference between the 2 people is -4078
+
+In order to configure the underlying data source for the application please use the appsettings.json file. Or just change the ingredients of the file provided with the solution.
